@@ -82,13 +82,15 @@
                 </a>
 
                 {{-- CMS --}}
-                <a href="#"
-                   class="flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-100/80">
-                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                    </svg>
-                    CMS
-                </a>
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.page-contents.index') }}"
+                       class="flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-all {{ request()->routeIs('admin.*') ? 'text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-sm' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100/80' }}">
+                        <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                        </svg>
+                        CMS
+                    </a>
+                @endif
 
                 {{-- Expert Query --}}
                 <a href="{{ route('expert-query.submit') }}"

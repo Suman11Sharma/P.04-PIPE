@@ -71,10 +71,14 @@
 
     <main class="pt-24 pb-16 min-h-screen">
         <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            @php
+                $header = \App\Models\PageContent::getSection('contact', 'header');
+                $contactInfo = \App\Models\PageContent::getSection('contact', 'contact_info');
+            @endphp
             <div class="animate-fade-up text-center mb-12">
-                <span class="inline-block rounded-full border border-blue-200/60 bg-gradient-to-r from-blue-50 to-blue-100/50 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-blue-700 shadow-sm">Get in touch</span>
-                <h1 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Contact Us</h1>
-                <p class="mt-3 text-base text-gray-500 max-w-xl mx-auto">Have a question, suggestion, or need assistance? Reach out to the PIPE team — part of the <strong class="text-gray-700">Pokhara Research Centre</strong>.</p>
+                <span class="inline-block rounded-full border border-blue-200/60 bg-gradient-to-r from-blue-50 to-blue-100/50 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-blue-700 shadow-sm">{{ $header['badge'] ?? 'Get in touch' }}</span>
+                <h1 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">{{ $header['title'] ?? 'Contact Us' }}</h1>
+                <p class="mt-3 text-base text-gray-500 max-w-xl mx-auto">{{ $header['description'] ?? 'Have a question, suggestion, or need assistance? Reach out to the PIPE team — part of the Pokhara Research Centre.' }}</p>
             </div>
 
             @if (session('status'))
@@ -100,8 +104,8 @@
                                     </svg>
                                 </div>
                                 <div class="min-w-0">
-                                    <div class="text-sm font-medium text-gray-900">Email</div>
-                                    <a href="mailto:contact@pipe.gov" class="text-sm text-blue-600 hover:text-blue-700 transition-colors">contact@pipe.gov</a>
+                                    <div class="text-sm font-medium text-gray-900">{{ $contactInfo['email_label'] ?? 'Email' }}</div>
+                                    <a href="mailto:{{ $contactInfo['email'] ?? 'contact@pipe.gov' }}" class="text-sm text-blue-600 hover:text-blue-700 transition-colors">{{ $contactInfo['email'] ?? 'contact@pipe.gov' }}</a>
                                 </div>
                             </div>
                             <div class="flex items-start gap-3">
@@ -112,8 +116,8 @@
                                     </svg>
                                 </div>
                                 <div class="min-w-0">
-                                    <div class="text-sm font-medium text-gray-900">Location</div>
-                                    <div class="text-sm text-gray-500">Parliament of South Africa<br />Cape Town, Western Cape</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $contactInfo['location_label'] ?? 'Location' }}</div>
+                                    <div class="text-sm text-gray-500">{!! nl2br(e($contactInfo['location'] ?? "Parliament of South Africa\nCape Town, Western Cape")) !!}</div>
                                 </div>
                             </div>
                             <div class="flex items-start gap-3">
@@ -123,8 +127,8 @@
                                     </svg>
                                 </div>
                                 <div class="min-w-0">
-                                    <div class="text-sm font-medium text-gray-900">Phone</div>
-                                    <a href="tel:+27214000000" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">+27 21 400 0000</a>
+                                    <div class="text-sm font-medium text-gray-900">{{ $contactInfo['phone_label'] ?? 'Phone' }}</div>
+                                    <a href="tel:{{ $contactInfo['phone'] ?? '+27214000000' }}" class="text-sm text-gray-500 hover:text-gray-700 transition-colors">{{ $contactInfo['phone'] ?? '+27 21 400 0000' }}</a>
                                 </div>
                             </div>
                         </div>
@@ -133,10 +137,10 @@
                     <div class="rounded-xl border border-blue-200/60 bg-gradient-to-r from-blue-50 to-blue-100/50 p-6 shadow-sm">
                         <div class="flex items-center gap-3 mb-3">
                             <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span></span>
-                            <span class="text-sm font-medium text-blue-900">Quick Response</span>
+                            <span class="text-sm font-medium text-blue-900">{{ $contactInfo['quick_response_title'] ?? 'Quick Response' }}</span>
                         </div>
                         <p class="text-sm text-blue-700 leading-relaxed">
-                            Our team typically responds within <strong>24 hours</strong>. For urgent enquiries, please use the <a href="{{ route('expert-query.submit') }}" class="font-medium underline hover:text-blue-900 transition-colors">Ask-An-Expert</a> system.
+                            {{ $contactInfo['quick_response_text'] ?? 'Our team typically responds within 24 hours. For urgent enquiries, please use the Ask-An-Expert system.' }}
                         </p>
                     </div>
                 </div>

@@ -26,45 +26,7 @@ Route::get('/', function () {
         'total_queries' => \App\Models\ExpertQuery::count(),
         'policy_briefs' => \App\Models\PolicyBrief::count(),
     ];
-    $features = [
-        [
-            'title' => 'Policy Briefs',
-            'description' => 'Curated expert briefings across 10 policy sectors with rich markdown content, executive summaries, and an MP feedback engine.',
-            'icon' => 'document',
-            'color' => 'emerald',
-        ],
-        [
-            'title' => 'Legislative Tracker',
-            'description' => 'Real-time bill progress with multi-stage steppers, side-by-side amendment comparison with diff highlighting.',
-            'icon' => 'scale',
-            'color' => 'blue',
-        ],
-        [
-            'title' => 'Ask-An-Expert',
-            'description' => 'Submit research queries with tiered turnaround options: Standard, 48-Hour Deep Analysis, or 30-Minute Floor Support.',
-            'icon' => 'chat',
-            'color' => 'amber',
-        ],
-        [
-            'title' => 'Personal Dashboard',
-            'description' => 'Personalized MP workspace with intelligence feed, query tracking, upcoming legislation, and policy risk alerts.',
-            'icon' => 'dashboard',
-            'color' => 'purple',
-        ],
-        [
-            'title' => 'Researcher Kanban',
-            'description' => 'Internal workflow management with SLA monitoring, senior review workflows, and automated breach detection.',
-            'icon' => 'kanban',
-            'color' => 'rose',
-        ],
-        [
-            'title' => 'Bill Comparison',
-            'description' => 'Side-by-side amendment delta with color-coded diff highlighting, constitutional summaries, and voting ledger charts.',
-            'icon' => 'compare',
-            'color' => 'indigo',
-        ],
-    ];
-    return view('welcome', compact('stats', 'features'));
+    return view('welcome', compact('stats'));
 })->name('home');
 
 // ── Public Pages ─────────────────────────────────────────────────────────
@@ -119,6 +81,16 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
 
         Route::get('/research/review/{query}', SeniorReviewComponent::class)
             ->name('researcher.review');
+    });
+
+    // ── Admin: Page Content Management (restricted to admins) ──
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/page-contents', [\App\Http\Controllers\Admin\PageContentController::class, 'index'])
+            ->name('page-contents.index');
+        Route::get('/page-contents/{page}/{section}', [\App\Http\Controllers\Admin\PageContentController::class, 'edit'])
+            ->name('page-contents.edit');
+        Route::put('/page-contents/{page}/{section}', [\App\Http\Controllers\Admin\PageContentController::class, 'update'])
+            ->name('page-contents.update');
     });
 });
 

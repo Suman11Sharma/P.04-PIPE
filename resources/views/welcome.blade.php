@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'PIPE') }} — Province Information Portal and Engagement Platform</title>
-    <meta name="description" content="Province Information Portal and Engagement Platform — connecting citizens with provincial government data, legislative tracking, and community engagement. Part of the Pokhara Research Centre.">
+    @php
+        $seo = \App\Models\PageContent::getSection('home', 'seo');
+    @endphp
+    <title>{{ $seo['meta_title'] ?? config('app.name', 'PIPE') . ' — Province Information Portal and Engagement Platform' }}</title>
+    <meta name="description" content="{{ $seo['meta_description'] ?? 'Province Information Portal and Engagement Platform — connecting citizens with provincial government data, legislative tracking, and community engagement. Part of the Pokhara Research Centre.' }}">
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -103,21 +106,23 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 w-full">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center py-16 md:py-24">
 
+                @php
+                    $hero = \App\Models\PageContent::getSection('home', 'hero');
+                @endphp
                 <div class="animate-fade-up">
                     <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-200/60 bg-gradient-to-r from-blue-50 to-blue-100/50 px-4 py-1.5 text-xs font-medium tracking-wider uppercase text-blue-700 shadow-sm">
                         <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-                        Province Information Portal
+                        {{ $hero['badge'] ?? 'Province Information Portal' }}
                     </div>
 
                     <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
-                        <span class="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">PIPE</span>
+                        <span class="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">{{ $hero['title_highlight'] ?? 'PIPE' }}</span>
                         <br />
-                        Empowering Citizens
+                        {{ $hero['title'] ?? 'Empowering Citizens' }}
                     </h1>
 
                     <p class="mt-5 text-base sm:text-lg leading-relaxed text-gray-500 max-w-xl">
-                        Province Information Portal and Engagement Platform — connecting citizens with provincial government data,
-                        real-time legislative tracking, and community engagement tools. Part of the <strong>Pokhara Research Centre</strong>.
+                        {{ $hero['description'] ?? 'Province Information Portal and Engagement Platform — connecting citizens with provincial government data, real-time legislative tracking, and community engagement tools. Part of the Pokhara Research Centre.' }}
                     </p>
 
                     <div class="mt-8 flex flex-wrap items-center gap-4">
@@ -260,6 +265,11 @@
                 <p class="mt-4 text-base leading-relaxed text-gray-500">A unified platform designed for the unique demands of provincial information, policy research, and citizen engagement.</p>
             </div>
 
+            @php
+                $featuresData = \App\Models\PageContent::getSection('home', 'features');
+                $features = $featuresData['items'] ?? [];
+            @endphp
+
             <div class="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 @php
                     $iconSvgs = [
@@ -272,16 +282,22 @@
                     ];
                 @endphp
 
-                @foreach ($features as $f)
-                    <div class="group animate-fade-up animate-fade-up-d{{ min($loop->index + 1, 5) }} relative rounded-xl border border-gray-200/60 bg-white p-6 transition-all hover:border-blue-200/80 hover:shadow-xl hover:-translate-y-0.5 shadow-sm">
-                        <div class="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-blue-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100/80 shadow-sm group-hover:shadow-md group-hover:from-blue-100 group-hover:to-blue-200/80 transition-all">
-                            <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">{!! $iconSvgs[$f['icon']] !!}</svg>
+                @if (!empty($features))
+                    @foreach ($features as $f)
+                        <div class="group animate-fade-up animate-fade-up-d{{ min($loop->index + 1, 5) }} relative rounded-xl border border-gray-200/60 bg-white p-6 transition-all hover:border-blue-200/80 hover:shadow-xl hover:-translate-y-0.5 shadow-sm">
+                            <div class="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-blue-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100/80 shadow-sm group-hover:shadow-md group-hover:from-blue-100 group-hover:to-blue-200/80 transition-all">
+                                <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">{!! $iconSvgs[$f['icon']] !!}</svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">{{ $f['title'] }}</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-gray-500">{{ $f['description'] }}</p>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">{{ $f['title'] }}</h3>
-                        <p class="mt-2 text-sm leading-relaxed text-gray-500">{{ $f['description'] }}</p>
+                    @endforeach
+                @else
+                    <div class="col-span-full text-center py-16">
+                        <p class="text-gray-400">No features configured. Add them from the CMS.</p>
                     </div>
-                @endforeach
+                @endif
             </div>
         </div>
     </section>
@@ -292,8 +308,11 @@
             <div class="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-blue-100/20 to-transparent blur-3xl"></div>
         </div>
         <div class="mx-auto max-w-4xl px-4 sm:px-6 text-center">
-            <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Ready to engage with provincial intelligence?</h2>
-            <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-gray-500">Join South Africa's leading provincial information portal connecting citizens with government data and engagement tools.</p>
+            @php
+                $cta = \App\Models\PageContent::getSection('home', 'cta');
+            @endphp
+            <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ $cta['title'] ?? 'Ready to engage with provincial intelligence?' }}</h2>
+            <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-gray-500">{{ $cta['description'] ?? 'Join South Africa leading provincial information portal connecting citizens with government data and engagement tools.' }}</p>
             <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 @auth
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3.5 text-base font-semibold text-white shadow-md hover:from-blue-700 hover:to-blue-800 hover:shadow-lg transition-all">Go to Dashboard <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg></a>

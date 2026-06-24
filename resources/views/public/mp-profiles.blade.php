@@ -1,11 +1,6 @@
 @php
-    use App\Models\User;
-    use App\Enums\UserRole;
-    $mps = User::with('constituency')
-        ->whereIn('role_enum', [UserRole::MP, UserRole::CommitteeChair, UserRole::Staff])
-        ->get();
-
-    // Pre-defined avatar colors for users without photos
+    $mpsData = \App\Models\PageContent::getSection('mp-profiles', 'members');
+    $mps = $mpsData['items'] ?? [];
     $avatarColors = ['bg-blue-100 text-blue-600', 'bg-indigo-100 text-indigo-600', 'bg-cyan-100 text-cyan-600', 'bg-sky-100 text-sky-600', 'bg-teal-100 text-teal-600'];
 @endphp
 
@@ -83,30 +78,36 @@
 
     <main class="pt-24 pb-16 min-h-screen">
         <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            @php
+                $header = \App\Models\PageContent::getSection('mp-profiles', 'header');
+            @endphp
             <div class="animate-fade-up text-center mb-12">
-                <span class="inline-block rounded-full border border-blue-200/60 bg-gradient-to-r from-blue-50 to-blue-100/50 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-blue-700 shadow-sm">Parliament</span>
-                <h1 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">Member of Parliament Profiles</h1>
-                <p class="mt-3 text-base text-gray-500 max-w-xl mx-auto">Meet the parliamentary members serving their constituencies through the Province Information Portal and Engagement Platform — a <strong class="text-gray-700">Pokhara Research Centre</strong> initiative.</p>
+                <span class="inline-block rounded-full border border-blue-200/60 bg-gradient-to-r from-blue-50 to-blue-100/50 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-blue-700 shadow-sm">{{ $header['badge'] ?? 'Parliament' }}</span>
+                <h1 class="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">{{ $header['title'] ?? 'Member of Parliament Profiles' }}</h1>
+                <p class="mt-3 text-base text-gray-500 max-w-xl mx-auto">{{ $header['description'] ?? 'Meet the parliamentary members serving their constituencies through the Province Information Portal and Engagement Platform — a Pokhara Research Centre initiative.' }}</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse ($mps as $i => $mp)
                     @php
                         $colorIdx = $loop->index % count($avatarColors);
-                        $initials = substr($mp->name, 0, 1) . substr(strrchr($mp->name, ' ') ?: $mp->name, 1, 1);
+                        $nameParts = explode(' ', $mp['name'] ?? '');
+                        $initials = count($nameParts) >= 2
+                            ? substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1)
+                            : substr($mp['name'] ?? '?', 0, 2);
                     @endphp
                     <div class="animate-fade-up animate-fade-up-d{{ min($loop->index + 1, 5) }} group relative rounded-xl border border-gray-200/60 bg-white transition-all hover:border-blue-200/80 hover:shadow-xl hover:-translate-y-0.5 shadow-sm overflow-hidden">
                         <div class="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-blue-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
-                        {{-- Photo section --}}
                         <div class="relative h-44 sm:h-48 bg-gradient-to-br from-blue-50 via-white to-blue-100/50 flex items-center justify-center border-b border-gray-100">
-                            @if ($mp->profile_photo_path)
-                                <img src="{{ Storage::url($mp->profile_photo_path) }}" alt="{{ $mp->name }}"
+                            @php $photo = $mp['photo'] ?? ''; @endphp
+                            @if ($photo && (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo) || str_starts_with($photo, 'http')))
+                                <img src="{{ str_starts_with($photo, 'http') ? $photo : \Illuminate\Support\Facades\Storage::url($photo) }}" alt="{{ $mp['name'] ?? '' }}"
                                     class="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover ring-4 ring-white shadow-lg" />
                             @else
                                 <div class="relative">
                                     <div class="h-28 w-28 sm:h-32 sm:w-32 rounded-full {{ $avatarColors[$colorIdx] }} flex items-center justify-center ring-4 ring-white shadow-lg">
-                                        <span class="text-4xl sm:text-5xl font-bold">{{ $initials }}</span>
+                                        <span class="text-4xl sm:text-5xl font-bold">{{ strtoupper($initials) }}</span>
                                     </div>
                                     <div class="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-white shadow-sm flex items-center justify-center">
                                         <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -119,27 +120,26 @@
 
                         <div class="p-5">
                             <div class="text-center">
-                                <h3 class="text-lg font-semibold text-gray-900">{{ $mp->name }}</h3>
-                                <span class="mt-1 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-50 to-blue-100/80 px-3 py-0.5 text-xs font-medium text-blue-700 shadow-sm">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-                                    {{ $mp->role_label }}
-                                </span>
+                                <h3 class="text-lg font-semibold text-gray-900">{{ $mp['name'] ?? 'Unknown' }}</h3>
+                                @if (!empty($mp['role']))
+                                    <span class="mt-1 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-blue-50 to-blue-100/80 px-3 py-0.5 text-xs font-medium text-blue-700 shadow-sm">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                                        {{ $mp['role'] }}
+                                    </span>
+                                @endif
                             </div>
 
-                            @if ($mp->constituency)
+                            @if (!empty($mp['constituency']) || !empty($mp['province']))
                                 <div class="mt-4 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/50 p-3 border border-gray-100/80">
                                     <div class="text-xs text-gray-500">Constituency</div>
-                                    <div class="text-sm font-medium text-gray-900">{{ $mp->constituency->name }}</div>
-                                    <div class="text-xs text-gray-500 mt-0.5">{{ $mp->constituency->province_name }}</div>
-                                </div>
-                            @else
-                                <div class="mt-4 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/50 p-3 border border-gray-100/80">
-                                    <div class="text-xs text-gray-500">Role</div>
-                                    <div class="text-sm font-medium text-gray-900">National Level</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $mp['constituency'] ?? 'National Level' }}</div>
+                                    @if (!empty($mp['province']))
+                                        <div class="text-xs text-gray-500 mt-0.5">{{ $mp['province'] }}</div>
+                                    @endif
                                 </div>
                             @endif
 
-                            <div class="mt-3 text-xs text-gray-500">{{ $mp->email }}</div>
+                            <div class="mt-3 text-xs text-gray-500">{{ $mp['email'] ?? '' }}</div>
 
                             <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.classList.toggle('hidden')"
                                     class="mt-4 w-full rounded-lg border border-gray-200 bg-white/80 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-white hover:border-gray-300 hover:shadow-md transition-all backdrop-blur-sm">
@@ -147,16 +147,10 @@
                             </button>
 
                             <div class="hidden mt-3 w-full space-y-2">
-                                @if ($mp->constituency && $mp->constituency->socio_economic_indicators)
-                                    @php $sei = $mp->constituency->socio_economic_indicators; @endphp
+                                @if (!empty($mp['bio']))
                                     <div class="rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/50 p-3 border border-gray-100/80 text-left">
-                                        <div class="text-xs font-semibold text-gray-600 mb-2">Constituency Indicators</div>
-                                        <div class="grid grid-cols-2 gap-2 text-xs">
-                                            <div><span class="text-gray-500">Population:</span> <span class="text-gray-900">{{ number_format($sei['population'] ?? 0) }}</span></div>
-                                            <div><span class="text-gray-500">Unemployment:</span> <span class="text-gray-900">{{ $sei['unemployment_rate'] ?? 'N/A' }}%</span></div>
-                                            <div><span class="text-gray-500">GDP/Capita:</span> <span class="text-gray-900">${{ number_format($sei['gdp_per_capita'] ?? 0) }}</span></div>
-                                            <div><span class="text-gray-500">Literacy:</span> <span class="text-gray-900">{{ $sei['literacy_rate'] ?? 'N/A' }}%</span></div>
-                                        </div>
+                                        <div class="text-xs font-semibold text-gray-600 mb-2">Biography</div>
+                                        <p class="text-xs text-gray-700 leading-relaxed">{{ $mp['bio'] }}</p>
                                     </div>
                                 @endif
                                 <button onclick="this.parentElement.classList.toggle('hidden'); this.parentElement.previousElementSibling.classList.toggle('hidden')"
@@ -169,7 +163,7 @@
                 @empty
                     <div class="col-span-full text-center py-20">
                         <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
-                        <p class="mt-4 text-gray-500">No MP profiles found.</p>
+                        <p class="mt-4 text-gray-500">No MP profiles found. Add them from the admin CMS.</p>
                     </div>
                 @endforelse
             </div>
