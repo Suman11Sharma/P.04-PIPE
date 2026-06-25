@@ -134,7 +134,7 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse ($bills as $bill)
                     @php
-                        $statusIdx = $stepperIndex($bill->status_enum->value);
+                        $statusIdx = $this->stepperIndex($bill->status_enum->value);
                         $isVetoed = $bill->status_enum->value === 'vetoed';
                     @endphp
                     <tr class="group hover:bg-gray-50 transition">
