@@ -62,7 +62,9 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     Route::get('/dashboard', DashboardController::class)
         ->name('dashboard');
 
-    // Policy Brief Single View
+    // ── Policy Briefs ──────────────────────────────────────
+    Route::get('/policy-briefs', [PolicyBriefController::class, 'index'])
+        ->name('policy-briefs.index');
     Route::get('/policy-briefs/{brief:slug}', [PolicyBriefController::class, 'show'])
         ->name('policy-briefs.show');
 
@@ -73,6 +75,42 @@ Route::middleware(['auth', 'two-factor'])->group(function () {
     // ── Ask-An-Expert: MP Submission ──────────────────────────
     Route::get('/expert-query/submit', ExpertQuerySubmit::class)
         ->name('expert-query.submit');
+
+    // ── Tracker (General Activity Overview) ────────────────
+    Route::get('/tracker', function () {
+        $stats = [
+            'active_users' => \App\Models\User::count(),
+            'total_queries' => \App\Models\ExpertQuery::count(),
+            'policy_briefs' => \App\Models\PolicyBrief::count(),
+            'active_bills' => \App\Models\Bill::active()->count(),
+        ];
+
+        $recentQueries = \App\Models\ExpertQuery::query()
+            ->with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentBills = \App\Models\Bill::query()
+            ->active()
+            ->recentlyTabled()
+            ->take(5)
+            ->get();
+
+        $recentBriefs = \App\Models\PolicyBrief::query()
+            ->published()
+            ->latest('published_at')
+            ->take(5)
+            ->get();
+
+        return view('tracker.index', compact('stats', 'recentQueries', 'recentBills', 'recentBriefs'));
+    })->name('tracker');
+
+    // ── User Management (restricted to admins) ──────────────
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])
+            ->name('users.index');
+    });
 
     // ── Researcher Workspace (restricted to researchers) ───────
     Route::middleware(['role:senior_researcher,junior_researcher'])->group(function () {

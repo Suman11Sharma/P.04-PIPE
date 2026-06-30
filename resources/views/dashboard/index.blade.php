@@ -13,13 +13,6 @@
         <div class="relative">
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                    <div class="flex items-center gap-2 text-xs font-medium uppercase tracking-widest text-blue-600 mb-2">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                        </svg>
-                        {{ $constituencyName }}
-                    </div>
                     <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
                         Good {{ now()->hour < 12 ? 'morning' : (now()->hour < 17 ? 'afternoon' : 'evening') }}, {{ auth()->user()->name }}
                     </h1>
@@ -43,12 +36,235 @@
                                 {{ $criticalNotification->title }}
                             </a>
                         </p>
-                        <p class="mt-0.5 text-xs text-amber-600/70">
-                            {{ str($criticalNotification->summary)->limit(120) }}
-                        </p>
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+
+    {{-- 2. STATS CARDS --}}
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+        {{-- Total Users --}}
+        <div class="relative rounded-xl border border-gray-200/60 bg-white p-4 sm:p-5 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+            <div class="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br from-blue-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ number_format($stats['total_users']) }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 truncate">Users</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Total MPs --}}
+        <div class="relative rounded-xl border border-gray-200/60 bg-white p-4 sm:p-5 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+            <div class="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br from-green-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-green-50 text-green-600">
+                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ number_format($stats['total_mps']) }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 truncate">MPs</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Total Queries --}}
+        <div class="relative rounded-xl border border-gray-200/60 bg-white p-4 sm:p-5 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+            <div class="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br from-amber-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ number_format($stats['total_queries']) }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 truncate">Total Queries</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Completed Queries --}}
+        <div class="relative rounded-xl border border-gray-200/60 bg-white p-4 sm:p-5 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+            <div class="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br from-emerald-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ number_format($stats['queries_completed']) }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 truncate">Completed</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Pending Queries --}}
+        <div class="relative rounded-xl border border-gray-200/60 bg-white p-4 sm:p-5 shadow-sm overflow-hidden group hover:shadow-md transition-all">
+            <div class="pointer-events-none absolute -right-6 -top-6 h-16 w-16 rounded-full bg-gradient-to-br from-rose-50/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
+                    <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ number_format($stats['queries_pending']) }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 truncate">Pending</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 3. NEW QUERIES TABLE + BAR CHART SIDE-BY-SIDE --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {{-- Queries Table (takes 2/3) --}}
+        <div class="lg:col-span-2 rounded-xl border border-gray-200/60 bg-white shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-900">New &amp; Unassigned Queries</h2>
+                    <p class="text-xs text-gray-500">Queries pending researcher assignment</p>
+                </div>
+                <a href="{{ route('expert-query.submit') }}" class="text-xs font-medium text-blue-600 hover:text-blue-700 transition">View all &rarr;</a>
+            </div>
+            <livewire:admin-dashboard-queries />
+        </div>
+
+        {{-- Bar Chart (takes 1/3) --}}
+        <div class="rounded-xl border border-gray-200/60 bg-white shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-900">Monthly Queries</h2>
+                <p class="text-xs text-gray-500">Completed vs Pending by month</p>
+            </div>
+            <div class="p-5">
+                {{-- Month filter --}}
+                <form method="GET" action="{{ route('dashboard') }}" class="mb-4">
+                    <label for="month-filter" class="block text-xs font-medium text-gray-500 mb-1.5">Select Month</label>
+                    <div class="flex items-center gap-2">
+                        <select id="month-filter" name="month"
+                                onchange="this.form.submit()"
+                                class="block w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm hover:border-gray-300 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition">
+                            @foreach ($monthOptions as $value => $label)
+                                <option value="{{ $value }}" {{ $selectedMonth === $value ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <noscript>
+                            <button type="submit" class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 transition">Go</button>
+                        </noscript>
+                    </div>
+                </form>
+
+                {{-- Chart legend --}}
+                <div class="flex items-center gap-4 mb-4 text-xs">
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block h-2.5 w-2.5 rounded-sm bg-emerald-500"></span>
+                        Completed
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="inline-block h-2.5 w-2.5 rounded-sm bg-amber-400"></span>
+                        Pending
+                    </span>
+                </div>
+
+                @if ($chartCompleted === 0 && $chartPending === 0)
+                    <div class="flex flex-col items-center justify-center py-12 text-center">
+                        <svg class="h-8 w-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                        </svg>
+                        <p class="mt-3 text-sm text-gray-500">No query data for {{ $selectedMonthLabel }}</p>
+                        <p class="text-xs text-gray-400">Select a different month from the filter above.</p>
+                    </div>
+                @else
+                    {{-- Single month chart --}}
+                    <div class="text-center mb-3">
+                        <p class="text-sm font-semibold text-gray-700">{{ $selectedMonthLabel }}</p>
+                    </div>
+                    <div class="relative" style="height: 180px;">
+                        @php $yMax = 180 - 30; @endphp
+                        <svg viewBox="0 0 200 180" class="w-full h-full" preserveAspectRatio="xMidYMid meet">
+                            {{-- Y-axis gridlines --}}
+                            <line x1="0" y1="{{ $yMax }}" x2="200" y2="{{ $yMax }}" stroke="#f3f4f6" stroke-width="1" />
+                            <line x1="0" y1="{{ $yMax * 0.75 }}" x2="200" y2="{{ $yMax * 0.75 }}" stroke="#f3f4f6" stroke-width="1" />
+                            <line x1="0" y1="{{ $yMax * 0.5 }}" x2="200" y2="{{ $yMax * 0.5 }}" stroke="#f3f4f6" stroke-width="1" />
+                            <line x1="0" y1="{{ $yMax * 0.25 }}" x2="200" y2="{{ $yMax * 0.25 }}" stroke="#f3f4f6" stroke-width="1" />
+
+                            @php
+                                $barWidth = 50;
+                                $gap = 20;
+                                $completedHeight = ($chartCompleted / $chartMax) * ($yMax - 10);
+                                $pendingHeight = ($chartPending / $chartMax) * ($yMax - 10);
+                                $center = 100;
+                                $completedX = $center - $barWidth - $gap / 2;
+                                $pendingX = $center + $gap / 2;
+                            @endphp
+
+                            {{-- Completed bar --}}
+                            @if ($chartCompleted > 0)
+                                <rect x="{{ $completedX }}" y="{{ $yMax - $completedHeight }}"
+                                      width="{{ $barWidth }}" height="{{ $completedHeight }}"
+                                      fill="#10b981" rx="4" opacity="0.85">
+                                    <title>{{ $chartCompleted }} completed</title>
+                                </rect>
+                                <text x="{{ $completedX + $barWidth / 2 }}" y="{{ $yMax - $completedHeight - 6 }}"
+                                      text-anchor="middle" fill="#10b981" font-size="14" font-weight="700" font-family="Inter, sans-serif">
+                                    {{ $chartCompleted }}
+                                </text>
+                                <text x="{{ $completedX + $barWidth / 2 }}" y="{{ $yMax + 14 }}"
+                                      text-anchor="middle" fill="#6b7280" font-size="11" font-family="Inter, sans-serif">
+                                    Completed
+                                </text>
+                            @else
+                                <text x="{{ $completedX + $barWidth / 2 }}" y="{{ $yMax - 6 }}"
+                                      text-anchor="middle" fill="#d1d5db" font-size="14" font-weight="700" font-family="Inter, sans-serif">
+                                    0
+                                </text>
+                                <text x="{{ $completedX + $barWidth / 2 }}" y="{{ $yMax + 14 }}"
+                                      text-anchor="middle" fill="#9ca3af" font-size="11" font-family="Inter, sans-serif">
+                                    Completed
+                                </text>
+                            @endif
+
+                            {{-- Pending bar --}}
+                            @if ($chartPending > 0)
+                                <rect x="{{ $pendingX }}" y="{{ $yMax - $pendingHeight }}"
+                                      width="{{ $barWidth }}" height="{{ $pendingHeight }}"
+                                      fill="#fbbf24" rx="4" opacity="0.85">
+                                    <title>{{ $chartPending }} pending</title>
+                                </rect>
+                                <text x="{{ $pendingX + $barWidth / 2 }}" y="{{ $yMax - $pendingHeight - 6 }}"
+                                      text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="700" font-family="Inter, sans-serif">
+                                    {{ $chartPending }}
+                                </text>
+                                <text x="{{ $pendingX + $barWidth / 2 }}" y="{{ $yMax + 14 }}"
+                                      text-anchor="middle" fill="#6b7280" font-size="11" font-family="Inter, sans-serif">
+                                    Pending
+                                </text>
+                            @else
+                                <text x="{{ $pendingX + $barWidth / 2 }}" y="{{ $yMax - 6 }}"
+                                      text-anchor="middle" fill="#d1d5db" font-size="14" font-weight="700" font-family="Inter, sans-serif">
+                                    0
+                                </text>
+                                <text x="{{ $pendingX + $barWidth / 2 }}" y="{{ $yMax + 14 }}"
+                                      text-anchor="middle" fill="#9ca3af" font-size="11" font-family="Inter, sans-serif">
+                                    Pending
+                                </text>
+                            @endif
+
+                            {{-- Bottom axis line --}}
+                            <line x1="20" y1="{{ $yMax }}" x2="180" y2="{{ $yMax }}" stroke="#e5e7eb" stroke-width="1" />
+                        </svg>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 
@@ -69,14 +285,14 @@
         ];
     @endphp
 
-    {{-- 2. INTELLIGENCE FEED --}}
+    {{-- 4. INTELLIGENCE FEED --}}
     <section class="mb-10">
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h2 class="text-lg font-semibold text-gray-900">Intelligence Feed</h2>
                 <p class="text-sm text-gray-500">Curated policy briefs matching your sector interests</p>
             </div>
-            <a href="#" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition">View all &rarr;</a>
+            <a href="{{ route('policy-briefs.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition">View all &rarr;</a>
         </div>
 
         @if ($intelligenceFeed->isEmpty())
@@ -126,7 +342,7 @@
         @endif
     </section>
 
-    {{-- 3. QUERY STATUS TRACKER --}}
+    {{-- 5. QUERY STATUS TRACKER --}}
     <section class="mb-10">
         <div class="flex items-center justify-between mb-5">
             <div>
@@ -238,7 +454,7 @@
         @endif
     </section>
 
-    {{-- 4. UPCOMING LEGISLATION --}}
+    {{-- 6. UPCOMING LEGISLATION --}}
     <section>
         <div class="flex items-center justify-between mb-5">
             <div>

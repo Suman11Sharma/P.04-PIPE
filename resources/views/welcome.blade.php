@@ -59,7 +59,7 @@
             <nav class="hidden md:flex items-center gap-1">
                 <a href="/" class="relative rounded-lg px-3.5 py-2 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-sm transition-all">Home</a>
                 <a href="{{ route('mp-profiles') }}" class="rounded-lg px-3.5 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 transition-all">MP's Profile</a>
-                <a href="{{ route('gov-sites') }}" class="rounded-lg px-3.5 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 transition-all">Gov Site</a>
+                <a href="{{ route('gov-sites') }}" class="rounded-lg px-3.5 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 transition-all">Province Sites</a>
                 <a href="{{ route('our-team') }}" class="rounded-lg px-3.5 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 transition-all">Our Team</a>
                 <a href="{{ route('contact') }}" class="rounded-lg px-3.5 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80 transition-all">Contact</a>
             </nav>
@@ -83,7 +83,7 @@
             <div class="px-4 py-3 space-y-1">
                 <a href="/" class="block rounded-lg px-3 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700">Home</a>
                 <a href="{{ route('mp-profiles') }}" class="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80">MPA Profile</a>
-                <a href="{{ route('gov-sites') }}" class="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80">Gov Site</a>
+                <a href="{{ route('gov-sites') }}" class="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80">Province Sites</a>
                 <a href="{{ route('our-team') }}" class="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80">Our Team</a>
                 <a href="{{ route('contact') }}" class="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100/80">Contact</a>
                 <hr class="border-gray-200 my-2">
@@ -349,7 +349,7 @@
                     <ul class="space-y-3">
                         <li><a href="/" class="text-sm text-gray-500 hover:text-gray-200 transition-colors">Home</a></li>
                         <li><a href="{{ route('mp-profiles') }}" class="text-sm text-gray-500 hover:text-gray-200 transition-colors">MP's Profile</a></li>
-                        <li><a href="{{ route('gov-sites') }}" class="text-sm text-gray-500 hover:text-gray-200 transition-colors">Gov Site</a></li>
+                        <li><a href="{{ route('gov-sites') }}" class="text-sm text-gray-500 hover:text-gray-200 transition-colors">Province Sites</a></li>
                         <li><a href="{{ route('our-team') }}" class="text-sm text-gray-500 hover:text-gray-200 transition-colors">Our Team</a></li>
                     </ul>
                 </div>

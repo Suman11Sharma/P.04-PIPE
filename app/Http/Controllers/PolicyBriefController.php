@@ -7,6 +7,20 @@ use App\Models\PolicyBrief;
 class PolicyBriefController extends Controller
 {
     /**
+     * Display a paginated listing of published policy briefs.
+     */
+    public function index()
+    {
+        $briefs = PolicyBrief::query()
+            ->published()
+            ->with('sector', 'compiler')
+            ->latest('published_at')
+            ->paginate(12);
+
+        return view('policy-briefs.index', compact('briefs'));
+    }
+
+    /**
      * Display a single published policy brief with the reading layout.
      */
     public function show(string $slug)

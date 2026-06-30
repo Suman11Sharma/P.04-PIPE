@@ -20,7 +20,6 @@
             </div>
         </div>
     @endif
-
     <div class="space-y-6">
         @foreach ($pages as $pageKey => $pageLabel)
             @php
